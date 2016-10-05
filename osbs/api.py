@@ -10,6 +10,7 @@ from __future__ import print_function, unicode_literals, absolute_import
 import json
 import logging
 import os
+import os.path
 import sys
 import warnings
 import datetime
@@ -527,6 +528,15 @@ class OSBS(object):
     @osbsapi
     def get_token(self):
         return self.os.get_oauth_token()
+
+    @osbsapi
+    def login(self, token):
+        token_file = utils.get_instance_token_file_name(self.os_conf.conf_section)
+        token_file_dir = os.path.dirname(token_file)
+        if not os.path.exists(token_file_dir):
+            os.makedirs(token_file_dir)
+        with open(token_file, 'w') as f:
+            f.write(token)
 
     @osbsapi
     def get_user(self, username="~"):
